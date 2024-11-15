@@ -21,11 +21,23 @@
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:contentDescription="imagen de calculadora"
+            android:src="@drawable/vozoperadorabg"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent"
-            android:src="@drawable/vozoperadorabg"
             tools:ignore="HardcodedText" />
+
+        <TextView
+            android:id="@+id/tvDisplay"
+            android:layout_width="221dp"
+            android:layout_height="63dp"
+            android:layout_marginStart="16dp"
+            android:layout_marginTop="36dp"
+            android:text="Resultado: "
+            android:textSize="34sp"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
     </androidx.constraintlayout.widget.ConstraintLayout>
 </androidx.constraintlayout.widget.ConstraintLayout>
