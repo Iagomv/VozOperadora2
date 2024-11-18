@@ -216,7 +216,7 @@
         }
 
         // Deteccion de errores
-        private boolean erroresPersonalizados(int x){
+        private boolean erroresPersonalizados(double x){
             if(x==-6969){
                 return true;
             }
@@ -224,9 +224,9 @@
         }
 
         //Error handler
-        private void reproducirErrores(int x){
+        private void reproducirErrores(double x){
             if(x==-6969){
-                speakText("¿Dividir entre 0? Bro, ni Thanos se atrevió a tanto.");
+                speakText("¿Dividiendo entre cero listillo?");
             }
         }
         public void setResultado(int resultado) {

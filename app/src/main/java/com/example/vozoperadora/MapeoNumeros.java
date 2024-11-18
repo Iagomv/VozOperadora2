@@ -1,5 +1,7 @@
 package com.example.vozoperadora;
 
+import android.util.Log;
+
 import java.util.HashMap;
 
 public class MapeoNumeros {
@@ -20,11 +22,13 @@ public class MapeoNumeros {
     String[] Operadores = {"SUMA", "RESTA", "MULTIPLICACIÓN", "DIVISIÓN"};
 
     // Variables para almacenar los números y el operador encontrado
-    int numero1 = 0;
-    int numero2 = 0;
+    double numero1 = 0;
+    double numero2 = 0;
+    int decimal = 0;
+    boolean con = false;
     String operador = null;
     boolean operadorEncontrado = false;
-    int resultado = 0;
+    double resultado = 0;
     String[] palabras;
     // Mapa de palabras a números para facilitar la conversión
     HashMap<String, Integer> mapaNumeros = new HashMap<>();
@@ -77,24 +81,40 @@ public class MapeoNumeros {
     public void obteniendoDatos(String[] palabras) {
         for (String palabra : palabras) {
             palabra = palabra.toUpperCase();
+            verificarCon(palabra);
 
             // Si aún no se ha encontrado el operador, busca si la palabra actual es un operador
             if (!operadorEncontrado && esOperador(palabra)) {
-                operadorEncontrado = true;
-                operador = palabra;
+                operador = palabra; // Se asigna el operador
+                numero1 = setNumeroConDecimal(numero1,decimal); // reseteamos decimal
+                operadorEncontrado = true; con = false; // Reseteamos booleanos
+                Log.d("MapeoNumeros", "Operador encontrado: " + operador);
             }
             // Si es un número, añade el valor al número correspondiente
             else if (esNumero(palabra)) {
                 int valor = obtenerNumero(palabra);
-                if (!operadorEncontrado) {
-                    numero1 += valor;
-                } else {
-                    numero2 += valor;
+                if (con){
+                    decimal += valor;
+                }else {
+                    if (!operadorEncontrado) {
+                        numero1 += valor; // Se acumula el primer número
+                    } else {
+                        numero2 += valor; // Se acumula el segundo número
+                    }
                 }
             }
         }
+        // Si no se encontró ningún operador, puedes asignar un valor por defecto
+        if (operador == null) {
+            operador = "SUMA";  // Asignar un operador por defecto
+            Log.w("MapeoNumeros", "Operador no encontrado, se asignó 'SUMA' por defecto");
+        }
+        if (con==true){
+            numero2 = setNumeroConDecimal(numero2,decimal);
+        }
     }
 
+    // Solución para los números que deletreamos como "VEINTIX" --> VEINTE Y X
     private String veintiNumero(String palabra) {
         switch (palabra.toLowerCase()) {
             case "veintiuno": return "VEINTE Y UNO";
@@ -109,6 +129,27 @@ public class MapeoNumeros {
             case "veintinueve": return "VEINTE Y NUEVE";
             default: return palabra.toUpperCase(); // Devolver la palabra en mayúsculas si no coincide
         }
+    }
+
+    //Solución para decimales
+    private double setNumeroConDecimal(double x, int y) {
+        System.out.println("decimal ="+decimal);
+        // Calculamos el divisor para obtener la parte decimal
+        int longitudY = String.valueOf(y).length();
+        System.out.println("LongitudY = " + longitudY);
+        StringBuilder divisorBuilder = new StringBuilder("1");
+        for (int i = 0; i < longitudY; i++) {
+            divisorBuilder.append("0");
+        }
+        int divisor = Integer.parseInt(divisorBuilder.toString());
+        System.out.println("divisor = " + divisor);
+        // Pasamos el número a decimal utilizando el divisor
+        double decimalY = (double) y / divisor;
+        System.out.println("decimal =" + decimalY);
+        // Sumamos nuestro número más el decimal para obtener el resultado
+        double result = x + decimalY;
+        decimal = 0;
+        return result;
     }
 
     // Verifica si una palabra es un operador y devuelve true si lo es
@@ -133,8 +174,11 @@ public class MapeoNumeros {
     }
 
     // Realiza el cálculo basado en el operador y devuelve el resultado como un string
-    public int calcularResultado() {
-        int resultado;
+    public double calcularResultado() {
+        if (operador == null) {
+            throw new IllegalStateException("Operador no encontrado. No se puede calcular el resultado.");
+        }
+        double resultado;
         switch (operador) {
             case "SUMA":
             case "MAS":
@@ -166,6 +210,11 @@ public class MapeoNumeros {
         return resultado;
     }
 
+    private void verificarCon(String palabra){
+        if (palabra.equals("CON") || palabra.equals("COMA")){
+            con = true;
+        }
+    }
     // Restablece los valores para permitir reutilizar el objeto con nuevos cálculos
     public void resetValores() {
         numero1 = 0;
@@ -174,7 +223,7 @@ public class MapeoNumeros {
         operadorEncontrado = false;
         resultado = 0;
     }
-    public int getResultado() {
+    public double getResultado() {
         return resultado;
     }
 
