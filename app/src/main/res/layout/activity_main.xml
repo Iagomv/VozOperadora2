@@ -18,10 +18,11 @@
 
         <ImageView
             android:id="@+id/inicio"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
+            android:layout_width="0dp"
+            android:layout_height="0dp"
+            android:alpha="0.2"
             android:contentDescription="imagen de calculadora"
-            android:src="@drawable/vozoperadorabg"
+            android:src="@drawable/bgimage"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
@@ -29,15 +30,53 @@
             tools:ignore="HardcodedText" />
 
         <TextView
-            android:id="@+id/tvDisplay"
-            android:layout_width="221dp"
-            android:layout_height="63dp"
-            android:layout_marginStart="16dp"
-            android:layout_marginTop="36dp"
-            android:text="Resultado: "
-            android:textSize="34sp"
-            app:layout_constraintStart_toStartOf="parent"
+            android:id="@+id/tvResultado"
+            android:layout_width="231dp"
+            android:layout_height="0dp"
+            android:layout_marginTop="44dp"
+            android:layout_marginEnd="88dp"
+            android:layout_marginBottom="209dp"
+            android:focusable="false"
+            android:gravity="center"
+            android:text="Result"
+            android:textSize="60sp"
+            android:textStyle="bold"
+            app:layout_constraintBottom_toTopOf="@+id/ivEstadoGrabacion"
+            app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintTop_toTopOf="parent" />
+
+        <EditText
+            android:id="@+id/etAudioReconocido"
+            android:layout_width="308dp"
+            android:layout_height="135dp"
+            android:layout_marginStart="59dp"
+            android:layout_marginEnd="59dp"
+            android:ems="10"
+            android:focusable="false"
+            android:gravity="start|top"
+            android:hint="audio reconocido"
+            android:inputType="textMultiLine"
+            android:textAlignment="center"
+            android:textSize="20sp"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0.0"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintVertical_bias="0.55" />
+
+        <ImageView
+            android:id="@+id/ivEstadoGrabacion"
+            android:layout_width="214dp"
+            android:layout_height="146dp"
+            android:layout_marginBottom="66dp"
+            android:focusable="false"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0.551"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/tvResultado"
+            app:srcCompat="@drawable/startrecording" />
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 </androidx.constraintlayout.widget.ConstraintLayout>

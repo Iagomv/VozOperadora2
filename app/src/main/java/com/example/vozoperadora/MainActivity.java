@@ -11,6 +11,8 @@
     import android.speech.SpeechRecognizer;
     import android.speech.tts.TextToSpeech;
     import android.util.Log;
+    import android.view.View;
+    import android.widget.EditText;
     import android.widget.ImageView;
     import android.widget.TextView;
     import android.widget.Toast;
@@ -18,7 +20,6 @@
     import androidx.appcompat.app.AppCompatActivity;
 
     import java.util.ArrayList;
-    import java.util.Arrays;
     import java.util.Locale;
 
     public class MainActivity extends AppCompatActivity {
@@ -30,8 +31,11 @@
         private static final int REQUEST_RECORD_AUDIO_PERMISSION = 101;
         private ImageView inicio;
         private TextView tvDisplay;
+        private ImageView ivEstadoGrabacion;
         private static int resultado;
+        private EditText etAudioReconocido;
         MapeoNumeros mapeoNumeros;
+        Interfaz interfaz = new Interfaz();
 
         @Override
         protected void onCreate(Bundle savedInstanceState) {
@@ -44,9 +48,11 @@
             // Pedir permisos de grabación de audio
             requestRecordAudioPermission();
 
-            // Referencia al ImageView para iniciar la grabación
-            tvDisplay = findViewById(R.id.tvDisplay);
+            // Referencia a los elementos de la interfaz
+            tvDisplay = findViewById(R.id.tvResultado);
             inicio = findViewById(R.id.inicio);
+            etAudioReconocido = findViewById(R.id.etAudioReconocido);
+            ivEstadoGrabacion = findViewById(R.id.ivEstadoGrabacion);
             inicio.setOnClickListener(v -> startSpeechRecognition());  // Inicia el reconocimiento al hacer clic
             String textoPrueba = "Hola";
             speakText(textoPrueba);
@@ -86,7 +92,7 @@
             speechRecognizer.setRecognitionListener(new RecognitionListener() {
                 @Override
                 public void onReadyForSpeech(Bundle params) {
-                    Toast.makeText(MainActivity.this, "Listo para escuchar", Toast.LENGTH_SHORT).show();
+                    ivEstadoGrabacion.setImageResource(R.drawable.grabando);
                 }
 
                 @Override
@@ -107,6 +113,8 @@
                 @Override
                 public void onEndOfSpeech() {
                     Toast.makeText(MainActivity.this, "Grabación terminada", Toast.LENGTH_SHORT).show();
+                    ivEstadoGrabacion.setImageResource(R.drawable.startrecording);
+
                 }
 
                 @Override
@@ -143,15 +151,15 @@
                     ArrayList<String> matches = results.getStringArrayList(SpeechRecognizer.RESULTS_RECOGNITION);
 
                     if (matches != null && !matches.isEmpty()) {
-                        System.out.println(matches.get(0));
                         recognizedText = matches.get(0);  // Almacenamos el primer resultado
-                        System.out.println(matches);
-                        Toast.makeText(MainActivity.this, "Texto reconocido: " + recognizedText, Toast.LENGTH_LONG).show();
-                        String[] testFrase = {"SIETE", "SUMA", "DOS"};
-                        mapeoNumeros = new MapeoNumeros(testFrase);
-                        Log.d("Resultado  SUMA UNO", mapeoNumeros.getResultado().toString());
+                        etAudioReconocido.setText(getString(R.string.texto_reconocido) + recognizedText);
+                        mapeoNumeros = new MapeoNumeros(recognizedText);
+                        if (!erroresPersonalizados(mapeoNumeros.getResultado())){
+                            interfaz.mostrarResultado(mapeoNumeros.getResultado(),tvDisplay);
+                            speakText((String.valueOf(mapeoNumeros.getResultado()))); //Método para dar feedback del resultado por voz
+                        }
+                        reproducirErrores(mapeoNumeros.getResultado());
                         mapeoNumeros.resetValores();
-                        //speakText(recognizedText); //Método para dar feedback del resultado por voz
                     }
                 }
 
@@ -207,6 +215,20 @@
             }
         }
 
+        // Deteccion de errores
+        private boolean erroresPersonalizados(int x){
+            if(x==-6969){
+                return true;
+            }
+            return false;
+        }
+
+        //Error handler
+        private void reproducirErrores(int x){
+            if(x==-6969){
+                speakText("¿Dividir entre 0? Bro, ni Thanos se atrevió a tanto.");
+            }
+        }
         public void setResultado(int resultado) {
             this.resultado = resultado;
         }
@@ -222,8 +244,5 @@
             }
         }
 
-        private void mostrarResultado(int resultado){
-            String texto = String.valueOf(resultado);
-            tvDisplay.setText(texto);
-        }
+
     }

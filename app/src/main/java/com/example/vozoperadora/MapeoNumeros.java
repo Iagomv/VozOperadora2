@@ -17,24 +17,22 @@ public class MapeoNumeros {
             500, 600, 700, 800, 900 };
 
     // Arreglo de operadores soportados
-    String[] Operadores = {"SUMA", "RESTA", "MULTIPLICACION", "DIVISION"};
+    String[] Operadores = {"SUMA", "RESTA", "MULTIPLICACIÓN", "DIVISIÓN"};
 
     // Variables para almacenar los números y el operador encontrado
     int numero1 = 0;
     int numero2 = 0;
     String operador = null;
     boolean operadorEncontrado = false;
-
-
-
-    Number resultado = null;
-
+    int resultado = 0;
+    String[] palabras;
     // Mapa de palabras a números para facilitar la conversión
     HashMap<String, Integer> mapaNumeros = new HashMap<>();
     HashMap<Integer, String> mapaInverso = new HashMap<>();
 
     // Constructor: inicializa el mapa de palabras a números
-    public MapeoNumeros(String[] palabras) {
+    public MapeoNumeros(String textoRecibido) {
+        palabras = getArrayTextoCorregido(corregirTexto(textoRecibido));
         llenarMapas();
         obteniendoDatos(palabras);
         resultado = calcularResultado();
@@ -48,6 +46,22 @@ public class MapeoNumeros {
             mapaInverso.put(Valores[i], Palabras[i]);
         }
     }
+
+    //Parsear String a String[]
+    private String corregirTexto(String textoRecibido) {
+        String[] palabras = textoRecibido.split(" "); // Dividimos por espacios
+        for (int i = 0; i < palabras.length; i++) {
+            palabras[i] = veintiNumero(palabras[i]); // Procesamos cada palabra
+            System.out.println(palabras[i]);
+        }
+        return String.join(" ", palabras); // Reconstruimos la sentencia
+
+    }
+
+    private String[] getArrayTextoCorregido(String texto){
+        return texto.split(" ");
+    }
+
 
     // Comprueba si una palabra dada es un número
     public boolean esNumero(String textoaComparar){
@@ -81,13 +95,37 @@ public class MapeoNumeros {
         }
     }
 
+    private String veintiNumero(String palabra) {
+        switch (palabra.toLowerCase()) {
+            case "veintiuno": return "VEINTE Y UNO";
+            case "veintidos": return "VEINTE Y DOS";
+            case "veintidós": return "VEINTE Y DOS";
+            case "veintitres": return "VEINTE Y TRES";
+            case "veinticuatro": return "VEINTE Y CUATRO";
+            case "veinticinco": return "VEINTE Y CINCO";
+            case "veintiseis": return "VEINTE Y SEIS";
+            case "veintisiete": return "VEINTE Y SIETE";
+            case "veintiocho": return "VEINTE Y OCHO";
+            case "veintinueve": return "VEINTE Y NUEVE";
+            default: return palabra.toUpperCase(); // Devolver la palabra en mayúsculas si no coincide
+        }
+    }
+
     // Verifica si una palabra es un operador y devuelve true si lo es
     private boolean esOperador(String palabra) {
         switch (palabra) {
             case "SUMA":
+            case "MAS":
+            case "MÁS":
             case "RESTA":
+            case "MENOS":
+            case "MULTIPLICACIÓN":
             case "MULTIPLICACION":
-            case "DIVISION":
+            case "MULTIPLICADO":
+            case "POR":
+            case "ENTRE":
+            case "DIVIDIDO":
+            case "DIVISIÓN":
                 return true;
             default:
                 return false;
@@ -99,18 +137,26 @@ public class MapeoNumeros {
         int resultado;
         switch (operador) {
             case "SUMA":
+            case "MAS":
+            case "MÁS":
                 resultado = numero1 + numero2;
                 break;
             case "RESTA":
+            case "MENOS":
                 resultado = numero1 - numero2;
                 break;
+            case "POR":
             case "MULTIPLICACION":
+            case "MULTIPLICADO":
+            case "MULTIPLICACIÓN":
                 resultado = numero1 * numero2;
                 break;
             case "DIVISION":
+            case "DIVIDIDO":
+            case "ENTRE":
                 // Manejo de división por cero
                 if (numero2 == 0) {
-                    return 6969;
+                    return -6969;
                 }
                 resultado = numero1 / numero2;
                 break;
@@ -126,9 +172,9 @@ public class MapeoNumeros {
         numero2 = 0;
         operador = null;
         operadorEncontrado = false;
-        resultado = null;
+        resultado = 0;
     }
-    public Number getResultado() {
+    public int getResultado() {
         return resultado;
     }
 

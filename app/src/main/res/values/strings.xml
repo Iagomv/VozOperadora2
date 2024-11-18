@@ -1,3 +1,4 @@
 <resources>
     <string name="app_name">VozOperadora</string>
+    <string name="texto_reconocido">"Texto reconocido: "</string>
 </resources>
