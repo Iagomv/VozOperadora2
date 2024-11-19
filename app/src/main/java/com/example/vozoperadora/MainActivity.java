@@ -12,8 +12,11 @@
     import android.speech.tts.TextToSpeech;
     import android.util.Log;
     import android.view.View;
+    import android.widget.AdapterView;
+    import android.widget.ArrayAdapter;
     import android.widget.EditText;
     import android.widget.ImageView;
+    import android.widget.Spinner;
     import android.widget.TextView;
     import android.widget.Toast;
 
@@ -32,8 +35,12 @@
         private ImageView inicio;
         private TextView tvDisplay;
         private ImageView ivEstadoGrabacion;
+        private Spinner spinnerIdiomas;
+        private String idioma = "es-ES";
         private static int resultado;
+        String[] idiomasDisponibles = {"es-ES", "en-US", "fr-FR", "ru-RU"};
         private EditText etAudioReconocido;
+
         MapeoNumeros mapeoNumeros;
         Interfaz interfaz = new Interfaz();
 
@@ -41,21 +48,37 @@
         protected void onCreate(Bundle savedInstanceState) {
             super.onCreate(savedInstanceState);
             setContentView(R.layout.activity_main);
+            iniciarSpinner();
             // Configurar el SpeechRecognizer y el TextToSpeech
             configurarSpeechRecognizer();
-            configurarTextToSpeech();  // Inicializamos TextToSpeech
-
+            configurarTextToSpeech(idioma);  // Inicializamos TextToSpeech
             // Pedir permisos de grabación de audio
             requestRecordAudioPermission();
+            Referencias();
+            spinnerIdiomas.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+                @Override
+                public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+                    idioma = idiomasDisponibles[position];
+                    configurarTextToSpeech(idioma);  // Actualiza TTS
+                }
 
-            // Referencia a los elementos de la interfaz
+                @Override
+                public void onNothingSelected(AdapterView<?> parent) {
+                    // Manejo si no se selecciona nada
+                }
+            });
+
+            inicio.setOnClickListener(v -> startSpeechRecognition());  // Inicia el reconocimiento al hacer clic
+            String textoPrueba = "Hola";
+            //speakText(textoPrueba);
+        }
+
+        // Referencia a los elementos de la interfaz
+        private void Referencias() {
             tvDisplay = findViewById(R.id.tvResultado);
             inicio = findViewById(R.id.inicio);
             etAudioReconocido = findViewById(R.id.etAudioReconocido);
             ivEstadoGrabacion = findViewById(R.id.ivEstadoGrabacion);
-            inicio.setOnClickListener(v -> startSpeechRecognition());  // Inicia el reconocimiento al hacer clic
-            String textoPrueba = "Hola";
-            speakText(textoPrueba);
         }
 
         // Método para pedir permiso de grabación de audio
@@ -190,16 +213,16 @@
         }
 
         // Método para configurar TextToSpeech
-        private void configurarTextToSpeech() {
+        private void configurarTextToSpeech(String idioma) {
             textToSpeech = new TextToSpeech(this, status -> {
                 if (status == TextToSpeech.SUCCESS) {
                     // Configurar idioma a español
-                    int langResult = textToSpeech.setLanguage(Locale.forLanguageTag("es-ES"));
+                    int langResult = textToSpeech.setLanguage(Locale.forLanguageTag(idioma));
                     if (langResult == TextToSpeech.LANG_MISSING_DATA || langResult == TextToSpeech.LANG_NOT_SUPPORTED) {
                         Toast.makeText(MainActivity.this, "El idioma no es soportado", Toast.LENGTH_SHORT).show();
                     } else {
                         Toast.makeText(MainActivity.this, "TextToSpeech listo", Toast.LENGTH_SHORT).show();
-                        speakText("Instrucciones de uso de la aplicación, para comenzar a grabar presione la pantalla una vez");
+                        //speakText("Instrucciones de uso de la aplicación, para comenzar a grabar presione la pantalla una vez");
 
                     }
                 } else {
@@ -231,6 +254,29 @@
         }
         public void setResultado(int resultado) {
             this.resultado = resultado;
+        }
+
+        public void seleccionIdioma(){
+
+        }
+
+        public void iniciarSpinner(){
+
+            // 1. Obtén el Spinner desde el layout
+            spinnerIdiomas = findViewById(R.id.spinnerIdiomas);
+
+            // 2. Crea un adaptador con el contexto, el diseño y los datos
+            ArrayAdapter<String> adaptador = new ArrayAdapter<>(
+                    this,
+                    android.R.layout.simple_spinner_dropdown_item,
+                    idiomasDisponibles
+            );
+
+            // 3. Configura el diseño para las opciones desplegables (opcional)
+            adaptador.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+
+            // 4. Asocia el adaptador al Spinner
+            spinnerIdiomas.setAdapter(adaptador);
         }
         @Override
         protected void onDestroy() {

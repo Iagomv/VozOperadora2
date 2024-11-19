@@ -1,5 +1,6 @@
 package com.example.vozoperadora;
 
+import android.widget.Spinner;
 import android.widget.TextView;
 
 public class Interfaz {
@@ -9,5 +10,7 @@ public class Interfaz {
         String texto = String.valueOf(resultado);
         tv.setText(texto);
     }
+
+
 
 }
