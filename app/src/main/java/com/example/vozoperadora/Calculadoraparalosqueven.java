@@ -1,8 +1,10 @@
 package com.example.vozoperadora;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
+import android.widget.ImageButton;
 import android.widget.TextView;
 
 import androidx.activity.EdgeToEdge;
@@ -18,6 +20,7 @@ public class Calculadoraparalosqueven extends AppCompatActivity {
     private String entradaActual = "";
     private String entradaPrevia = "";
     private String operador = "";
+    private ImageButton btnVolver;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -25,38 +28,42 @@ public class Calculadoraparalosqueven extends AppCompatActivity {
         EdgeToEdge.enable(this);
         setContentView(R.layout.activity_calculadoraparalosqueven);
 
-        // Inicializar la pantalla (TextView) de la calculadora
+        // Inicializar la pantalla (TextView) de la calculadora y el botón de volver
         pantalla = findViewById(R.id.tvDisplay);
+        btnVolver = findViewById(R.id.btnVolver);
 
         // Asignar listeners a los botones de números
         int[] botonesNumeros = {R.id.btn0, R.id.btn1, R.id.btn2, R.id.btn3, R.id.btn4, R.id.btn5, R.id.btn6, R.id.btn7, R.id.btn8, R.id.btn9};
         for (int id : botonesNumeros) {
-            findViewById(id).setOnClickListener(this::alClickNumero);
+            findViewById(id).setOnClickListener(this::onClickNumero);
         }
 
         // Asignar listeners a los botones de operadores
-        findViewById(R.id.btnAdd).setOnClickListener(v -> alClickOperador("+"));
-        findViewById(R.id.btnSubtract).setOnClickListener(v -> alClickOperador("-"));
-        findViewById(R.id.btnMultiply).setOnClickListener(v -> alClickOperador("×"));
-        findViewById(R.id.btnDivide).setOnClickListener(v -> alClickOperador("÷"));
+        findViewById(R.id.btnAdd).setOnClickListener(v -> onClickOperador("+"));
+        findViewById(R.id.btnSubtract).setOnClickListener(v -> onClickOperador("-"));
+        findViewById(R.id.btnMultiply).setOnClickListener(v -> onClickOperador("×"));
+        findViewById(R.id.btnDivide).setOnClickListener(v -> onClickOperador("÷"));
 
         // Asignar listeners a botones especiales
-        findViewById(R.id.btnEquals).setOnClickListener(v -> alClickIgual());
-        findViewById(R.id.btnDot).setOnClickListener(v -> alClickPunto());
-        findViewById(R.id.btnCE).setOnClickListener(v -> alClickBorrarEntrada());
-        findViewById(R.id.btnC).setOnClickListener(v -> alClickBorrarTodo());
-        findViewById(R.id.btnDel).setOnClickListener(v -> alClickBorrarUltimo());
+        findViewById(R.id.btnEquals).setOnClickListener(v -> onClickIgual());
+        findViewById(R.id.btnDot).setOnClickListener(v -> onClickPunto());
+        findViewById(R.id.btnCE).setOnClickListener(v -> onClickBorrarEntrada());
+        findViewById(R.id.btnC).setOnClickListener(v -> onClickBorrarTodo());
+        findViewById(R.id.btnDel).setOnClickListener(v -> onClickBorrarUltimo());
+
+        //Listener del boton volver
+        btnVolver.setOnClickListener(v -> onClickVolver());
     }
 
     // Método llamado al presionar un botón numérico
-    private void alClickNumero(View vista) {
+    private void onClickNumero(View vista) {
         Button boton = (Button) vista;
         entradaActual += boton.getText().toString(); // Agregar número al texto actual
         actualizarPantalla(entradaActual); // Mostrarlo en pantalla
     }
 
     // Método llamado al seleccionar un operador
-    private void alClickOperador(String operadorSeleccionado) {
+    private void onClickOperador(String operadorSeleccionado) {
         if (!entradaActual.isEmpty()) {
             entradaPrevia = entradaActual; // Guardar número actual
             entradaActual = ""; // Limpiar la entrada actual
@@ -66,7 +73,7 @@ public class Calculadoraparalosqueven extends AppCompatActivity {
     }
 
     // Método llamado al presionar el botón "="
-    private void alClickIgual() {
+    private void onClickIgual() {
         if (!entradaActual.isEmpty() && !entradaPrevia.isEmpty() && !operador.isEmpty()) {
             double resultado = 0;
             double numero1 = Double.parseDouble(entradaPrevia);
@@ -102,7 +109,7 @@ public class Calculadoraparalosqueven extends AppCompatActivity {
     }
 
     // Método llamado al presionar el botón "."
-    private void alClickPunto() {
+    private void onClickPunto() {
         if (!entradaActual.contains(".")) {
             if (entradaActual.isEmpty()) {
                 entradaActual = "0."; // Si no hay entrada, comienza con "0."
@@ -114,13 +121,13 @@ public class Calculadoraparalosqueven extends AppCompatActivity {
     }
 
     // Método llamado al presionar "CE" (Borrar entrada actual)
-    private void alClickBorrarEntrada() {
+    private void onClickBorrarEntrada() {
         entradaActual = "";
         actualizarPantalla("0");
     }
 
     // Método llamado al presionar "C" (Reiniciar la calculadora)
-    private void alClickBorrarTodo() {
+    private void onClickBorrarTodo() {
         entradaActual = "";
         entradaPrevia = "";
         operador = "";
@@ -128,11 +135,17 @@ public class Calculadoraparalosqueven extends AppCompatActivity {
     }
 
     // Método llamado al presionar "DEL" (Borrar último dígito)
-    private void alClickBorrarUltimo() {
+    private void onClickBorrarUltimo() {
         if (!entradaActual.isEmpty()) {
             entradaActual = entradaActual.substring(0, entradaActual.length() - 1); // Eliminar último carácter
             actualizarPantalla(entradaActual.isEmpty() ? "0" : entradaActual); // Mostrar "0" si queda vacío
         }
+    }
+    
+    private void onClickVolver(){
+        Intent intent = new Intent(this, MainActivity.class);
+        startActivity(intent);
+
     }
 
     // Método para actualizar el texto de la pantalla

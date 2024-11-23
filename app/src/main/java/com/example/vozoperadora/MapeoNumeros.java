@@ -236,7 +236,7 @@ public class MapeoNumeros {
 
     //Solucion para abrir calculadora gráfica mediante el uso de la voz
     public boolean yaVeo(String text) {
-        return text.contains("yaveo") || text.contains("abresupercalculadora");
+        return text.contains("yaveo") || text.contains("abresúpercalculadora");
     }
 
 

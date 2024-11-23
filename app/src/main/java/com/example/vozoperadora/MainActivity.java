@@ -2,6 +2,7 @@
 
 
     import android.Manifest;
+    import android.animation.ObjectAnimator;
     import android.content.Intent;
     import android.content.pm.PackageManager;
     import android.os.Build;
@@ -32,6 +33,7 @@
         private Intent recognizerIntent;
         private String recognizedText = "";  // Variable para almacenar el texto reconocido
         private static final int REQUEST_RECORD_AUDIO_PERMISSION = 101;
+        private ImageView ivBienvenida;
         private ImageView inicio;
         private TextView tvDisplay;
         private ImageView ivEstadoGrabacion;
@@ -56,6 +58,7 @@
             // Pedir permisos de grabación de audio
             requestRecordAudioPermission();
             Referencias();
+            bienvenida();
             spinnerIdiomas.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
                 @Override
                 public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
@@ -79,6 +82,7 @@
             inicio = findViewById(R.id.inicio);
             etAudioReconocido = findViewById(R.id.etAudioReconocido);
             ivEstadoGrabacion = findViewById(R.id.ivEstadoGrabacion);
+            ivBienvenida = findViewById(R.id.ivBienvenida);
         }
 
         // Método para pedir permiso de grabación de audio
@@ -328,7 +332,11 @@
 
         //Pantalla de inicio
         public void bienvenida(){
-
+            // Crear animación de alpha (0: completamente invisible, 1: completamente visible)
+            ObjectAnimator alphaAnimator = ObjectAnimator.ofFloat(ivBienvenida, "alpha", 1f, 0f);
+            alphaAnimator.setDuration(4000); // 2 segundos
+            // Iniciar la animación
+            alphaAnimator.start();
         }
 
 
