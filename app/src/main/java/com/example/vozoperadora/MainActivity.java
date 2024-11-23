@@ -69,7 +69,7 @@
             });
 
             inicio.setOnClickListener(v -> startSpeechRecognition());  // Inicia el reconocimiento al hacer clic
-            String textoPrueba = "Hola";
+            //String textoPrueba = "Hola";
             //speakText(textoPrueba);
         }
 
@@ -176,7 +176,11 @@
                     if (matches != null && !matches.isEmpty()) {
                         recognizedText = matches.get(0);  // Almacenamos el primer resultado
                         etAudioReconocido.setText(getString(R.string.texto_reconocido) + recognizedText);
-                        mapeoNumeros = new MapeoNumeros(recognizedText);
+                        String textoPrueba = "Comoestas";
+                        String result = conversacion(textoPrueba);
+                        System.out.println(result);
+                        speakText(result);
+                        mapeoNumeros = new MapeoNumeros(recognizedText, MainActivity.this);
                         if (!erroresPersonalizados(mapeoNumeros.getResultado())){
                             interfaz.mostrarResultado(mapeoNumeros.getResultado(),tvDisplay);
                             speakText((String.valueOf(mapeoNumeros.getResultado()))); //Método para dar feedback del resultado por voz
@@ -249,7 +253,7 @@
         //Error handler
         private void reproducirErrores(double x){
             if(x==-6969){
-                speakText("¿Dividiendo entre cero listillo?");
+                speakText("¿Dividiendo entre cero, listillo?");
             }
         }
         public void setResultado(int resultado) {
@@ -259,7 +263,37 @@
         public void seleccionIdioma(){
 
         }
+        //Solucion para abrir calculadora gráfica mediante el uso de la voz
+        public String conversacion(String text) {
+            if (text == null || text.isEmpty()) {
+                return "No entendí lo que dijiste, por favor intenta de nuevo.";
+            }
 
+            // Convertir texto a minúsculas y limpiar espacios al inicio y al final
+            String comando = text.toLowerCase().replace(" ", "");
+
+            switch (comando) {
+                case "¿cómo estás?":
+                case "cómo estás":
+                case "como estas":
+                case "cómoestás":
+                    return "Todo bien, gracias por preguntar. ¿Y tú?";
+
+                case "hola":
+                    return "¡Hola! ¿En qué puedo ayudarte?";
+
+                case "adiós":
+                case "adios":
+                    return "Adiós, que tengas un buen día.";
+
+                default:
+                    // Respuesta para comandos no reconocidos
+                    return "No entendí el comando, por favor intenta de nuevo.";
+            }
+        }
+
+
+        // Iniciación del spinner
         public void iniciarSpinner(){
 
             // 1. Obtén el Spinner desde el layout

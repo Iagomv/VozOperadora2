@@ -1,10 +1,16 @@
 package com.example.vozoperadora;
 
+import static androidx.core.content.ContextCompat.startActivity;
+
+import android.app.Activity;
+import android.content.Context;
+import android.content.Intent;
 import android.util.Log;
 
 import java.util.HashMap;
 
 public class MapeoNumeros {
+    Context context;
     // Arreglos de palabras para los números y sus valores equivalentes en enteros
     String[] Palabras = { "UNO", "DOS", "TRES", "CUATRO", "CINCO", "SEIS",
             "SIETE", "OCHO", "NUEVE", "DIEZ", "ONCE", "DOCE", "TRECE",
@@ -35,7 +41,9 @@ public class MapeoNumeros {
     HashMap<Integer, String> mapaInverso = new HashMap<>();
 
     // Constructor: inicializa el mapa de palabras a números
-    public MapeoNumeros(String textoRecibido) {
+    public MapeoNumeros(String textoRecibido, Context context) {
+        this.context = context;
+        comprobacionDeSuperUsuario(textoRecibido.replace(" ", ""));
         palabras = getArrayTextoCorregido(corregirTexto(textoRecibido));
         llenarMapas();
         obteniendoDatos(palabras);
@@ -210,11 +218,13 @@ public class MapeoNumeros {
         return resultado;
     }
 
+    //Solución para decimales
     private void verificarCon(String palabra){
-        if (palabra.equals("CON") || palabra.equals("COMA")){
+        if (palabra.equals("CON") || palabra.equals("COMA") || palabra.equals("PUNTO")){
             con = true;
         }
     }
+
     // Restablece los valores para permitir reutilizar el objeto con nuevos cálculos
     public void resetValores() {
         numero1 = 0;
@@ -222,6 +232,23 @@ public class MapeoNumeros {
         operador = null;
         operadorEncontrado = false;
         resultado = 0;
+    }
+
+    //Solucion para abrir calculadora gráfica mediante el uso de la voz
+    public boolean yaVeo(String text) {
+        return text.contains("yaveo") || text.contains("abresupercalculadora");
+    }
+
+
+    public void abrirCalculadora() {
+            Intent intent = new Intent(context, Calculadoraparalosqueven.class);
+            context.startActivity(intent);
+    }
+
+    public void comprobacionDeSuperUsuario(String texto){
+        if (yaVeo(texto)){
+            abrirCalculadora();
+        }
     }
     public double getResultado() {
         return resultado;
