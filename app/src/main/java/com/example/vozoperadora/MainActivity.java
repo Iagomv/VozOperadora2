@@ -141,7 +141,6 @@
                 public void onEndOfSpeech() {
                     Toast.makeText(MainActivity.this, "Grabación terminada", Toast.LENGTH_SHORT).show();
                     ivEstadoGrabacion.setImageResource(R.drawable.startrecording);
-
                 }
 
                 @Override
@@ -185,6 +184,10 @@
 
                     if (textoObtenido != null && !textoObtenido.isEmpty()) {
                         recognizedText = textoObtenido.get(0);  // Almacenamos el primer resultado
+
+                        Cliente.enviarAlServidor(recognizedText);
+
+
                         etAudioReconocido.setText(getString(R.string.texto_reconocido) + recognizedText);
                         String conversacionText = conversacion(recognizedText);
                         Log.d("conversacionText", conversacionText);

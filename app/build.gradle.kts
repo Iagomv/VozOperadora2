@@ -33,6 +33,9 @@ android {
 
 dependencies {
 
+    implementation (libs.retrofit)
+    implementation (libs.converter.gson)
+    implementation(libs.mysql.connector.java)
     implementation(libs.appcompat)
     implementation(libs.material)
     implementation(libs.activity)
