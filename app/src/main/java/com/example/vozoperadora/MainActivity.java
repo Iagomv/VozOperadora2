@@ -37,6 +37,7 @@
         private ImageView ivEstadoGrabacion;
         private Spinner spinnerIdiomas;
         private String idioma = "es-ES";
+        private boolean bienvenida = false;
         private static int resultado;
         String[] idiomasDisponibles = {"es-ES", "en-US", "fr-FR", "ru-RU"};
         private EditText etAudioReconocido;
@@ -69,8 +70,7 @@
             });
 
             inicio.setOnClickListener(v -> startSpeechRecognition());  // Inicia el reconocimiento al hacer clic
-            //String textoPrueba = "Hola";
-            //speakText(textoPrueba);
+
         }
 
         // Referencia a los elementos de la interfaz
@@ -120,7 +120,7 @@
 
                 @Override
                 public void onBeginningOfSpeech() {
-                    Toast.makeText(MainActivity.this, "Iniciando grabación...", Toast.LENGTH_SHORT).show();
+                    //Toast.makeText(MainActivity.this, "Iniciando grabación...", Toast.LENGTH_SHORT).show();
                 }
 
                 @Override
@@ -147,21 +147,27 @@
                     switch (error) {
                         case SpeechRecognizer.ERROR_NETWORK_TIMEOUT:
                             errorMessage = "Tiempo de espera de red agotado";
+                            speakText(errorMessage);
                             break;
                         case SpeechRecognizer.ERROR_NO_MATCH:
                             errorMessage = "No se encontró coincidencia de voz";
+                            speakText(errorMessage);
                             break;
                         case SpeechRecognizer.ERROR_SPEECH_TIMEOUT:
                             errorMessage = "Se agotó el tiempo de espera de la voz";
+                            speakText(errorMessage);
                             break;
                         case SpeechRecognizer.ERROR_AUDIO:
                             errorMessage = "Error en el audio";
+                            speakText(errorMessage);
                             break;
                         case SpeechRecognizer.ERROR_SERVER:
                             errorMessage = "Error en el servidor";
+                            speakText(errorMessage);
                             break;
                         case SpeechRecognizer.ERROR_CLIENT:
                             errorMessage = "Error en el cliente";
+                            speakText(errorMessage);
                             break;
                         // Agrega más casos si es necesario
                     }
@@ -171,22 +177,26 @@
                 @Override
                 public void onResults(Bundle results) {
                     // Aquí obtenemos el texto del reconocimiento
-                    ArrayList<String> matches = results.getStringArrayList(SpeechRecognizer.RESULTS_RECOGNITION);
+                    ArrayList<String> textoObtenido = results.getStringArrayList(SpeechRecognizer.RESULTS_RECOGNITION);
 
-                    if (matches != null && !matches.isEmpty()) {
-                        recognizedText = matches.get(0);  // Almacenamos el primer resultado
+                    if (textoObtenido != null && !textoObtenido.isEmpty()) {
+                        recognizedText = textoObtenido.get(0);  // Almacenamos el primer resultado
                         etAudioReconocido.setText(getString(R.string.texto_reconocido) + recognizedText);
-                        String textoPrueba = "Comoestas";
-                        String result = conversacion(textoPrueba);
-                        System.out.println(result);
-                        speakText(result);
-                        mapeoNumeros = new MapeoNumeros(recognizedText, MainActivity.this);
-                        if (!erroresPersonalizados(mapeoNumeros.getResultado())){
-                            interfaz.mostrarResultado(mapeoNumeros.getResultado(),tvDisplay);
-                            speakText((String.valueOf(mapeoNumeros.getResultado()))); //Método para dar feedback del resultado por voz
+                        String conversacionText = conversacion(recognizedText);
+                        Log.d("conversacionText", conversacionText);
+                        if(conversacionText!=null && !conversacionText.equals("0")){
+                            speakText(conversacionText);
+                        }else {
+                            System.out.println("-------------------");
+                            mapeoNumeros = new MapeoNumeros(recognizedText, MainActivity.this);
+                            if (!erroresPersonalizados(mapeoNumeros.getResultado())){
+                                interfaz.mostrarResultado(mapeoNumeros.getResultado(),tvDisplay);
+                                speakText((String.valueOf(mapeoNumeros.getResultado()))); //Método para dar feedback del resultado por voz
+                            }
+                            reproducirErrores(mapeoNumeros.getResultado());
+                            mapeoNumeros.resetValores();
                         }
-                        reproducirErrores(mapeoNumeros.getResultado());
-                        mapeoNumeros.resetValores();
+
                     }
                 }
 
@@ -226,7 +236,11 @@
                         Toast.makeText(MainActivity.this, "El idioma no es soportado", Toast.LENGTH_SHORT).show();
                     } else {
                         Toast.makeText(MainActivity.this, "TextToSpeech listo", Toast.LENGTH_SHORT).show();
-                        //speakText("Instrucciones de uso de la aplicación, para comenzar a grabar presione la pantalla una vez");
+                        if (!bienvenida){
+                            speakText("Hola, soy vozoperadora, para hablar conmigo, presione la pantalla una vez, puedes pedirme que " +
+                                    "realice operaciones sencillas con un solo click en la pantalla, encantada de conocerte");
+                            bienvenida = true;
+                        }
 
                     }
                 } else {
@@ -256,27 +270,21 @@
                 speakText("¿Dividiendo entre cero, listillo?");
             }
         }
-        public void setResultado(int resultado) {
-            this.resultado = resultado;
-        }
 
-        public void seleccionIdioma(){
 
-        }
-        //Solucion para abrir calculadora gráfica mediante el uso de la voz
+        //Solucion para hablar con la calculadora
         public String conversacion(String text) {
             if (text == null || text.isEmpty()) {
                 return "No entendí lo que dijiste, por favor intenta de nuevo.";
             }
 
-            // Convertir texto a minúsculas y limpiar espacios al inicio y al final
-            String comando = text.toLowerCase().replace(" ", "");
+            // Convertir texto a minúsculas y limpiar espacios
+            String comando = text.toLowerCase();
 
             switch (comando) {
                 case "¿cómo estás?":
                 case "cómo estás":
                 case "como estas":
-                case "cómoestás":
                     return "Todo bien, gracias por preguntar. ¿Y tú?";
 
                 case "hola":
@@ -286,10 +294,41 @@
                 case "adios":
                     return "Adiós, que tengas un buen día.";
 
+                case "qué haces":
+                case "cuál es tu función":
+                case "cuál es tu función principal":
+                case "qué eres":
+                    return "Hola, soy vozoperadora, mi función principal es proporcionar apoyo para calcular a personas con visibilidad reducida";
+
+                case "cómo te llamas":
+                case "quién eres":
+                    return "¡Mi nombre es vozoperadora!, encantada de conocerte";
+
+                case "cómo abro la calculadora normal":
+                case "cómo veo la calculadora":
+                case "quiero ver la calculadora":
+                case "por qué no se abre la calculadora":
+                    return "Si quieres abrir la calculadora gráfica, prueba a decir el comando secreto, yaveo, o, abresupercalculadora";
+
+                case "creador":
+                case "creador de vozoperadora":
+                case "quien es el creador de vozoperadora":
+                case "cómo se llama el creador de vozoperadora":
+                case "quién te ha creado":
+                case "quién es tu creador":
+
+                    return "Mi dios y creador es Iago, si te caigo bien," +
+                            "puedes apoyarlo en las plataformas de Patreon y kickstarter,  para que pueda seguir trabajando en mi desarrollo, !Gracias¡";
+
                 default:
                     // Respuesta para comandos no reconocidos
-                    return "No entendí el comando, por favor intenta de nuevo.";
+                    return "0";
             }
+        }
+
+        //Pantalla de inicio
+        public void bienvenida(){
+
         }
 
 
