@@ -9,6 +9,10 @@ public class Interfaz {
         String texto = String.valueOf(resultado);
         tv.setText(texto);
     }
+    public void mostrarError(String error, TextView tv){
+        tv.setText(error);
+    }
+
 
 
 

@@ -265,7 +265,7 @@
 
         // Deteccion de errores
         private boolean erroresPersonalizados(double x){
-            if(x==-6969){
+            if(x==-6969 || x==-2.69){
                 return true;
             }
             return false;
@@ -275,6 +275,11 @@
         private void reproducirErrores(double x){
             if(x==-6969){
                 speakText("¿Dividiendo entre cero, listillo?");
+                interfaz.mostrarError("Listill@", tvDisplay);
+            }
+            if(x==-2.0069){
+                speakText("Perdona, creo que no te he entendido bien");
+                interfaz.mostrarError("Error", tvDisplay);
             }
         }
 

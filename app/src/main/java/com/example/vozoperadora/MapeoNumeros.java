@@ -114,7 +114,6 @@ public class MapeoNumeros {
         }
         // Si no se encontró ningún operador, puedes asignar un valor por defecto
         if (operador == null) {
-            operador = "SUMA";  // Asignar un operador por defecto
             Log.w("MapeoNumeros", "Operador no encontrado, se asignó 'SUMA' por defecto");
         }
         if (con==true){
@@ -184,7 +183,7 @@ public class MapeoNumeros {
     // Realiza el cálculo basado en el operador y devuelve el resultado como un string
     public double calcularResultado() {
         if (operador == null) {
-            throw new IllegalStateException("Operador no encontrado. No se puede calcular el resultado.");
+            return -2.0069;
         }
         double resultado;
         switch (operador) {
@@ -213,7 +212,7 @@ public class MapeoNumeros {
                 resultado = numero1 / numero2;
                 break;
             default:
-                return 0;
+                return -2.0069;
         }
         return resultado;
     }
